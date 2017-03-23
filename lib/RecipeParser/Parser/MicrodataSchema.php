@@ -7,7 +7,7 @@ class RecipeParser_Parser_MicrodataSchema {
         $xpath = new DOMXPath($doc);
 
         $microdata = null;
-        $nodes = $xpath->query('//*[contains(@itemtype, "//schema.org/Recipe") or contains(@itemtype, "//schema.org/recipe")]');
+        $nodes = $xpath->query('//*[contains(@itemtype, "schema.org/Recipe") or contains(@itemtype, "schema.org/recipe")]');
         if ($nodes->length) {
             $microdata = $nodes->item(0);
         }
@@ -77,6 +77,9 @@ class RecipeParser_Parser_MicrodataSchema {
 
             // Ingredients 
             $nodes = $xpath->query('.//*[@itemprop="ingredients"]', $microdata);
+            if (!$nodes->length) {
+                $nodes = $xpath->query('.//*[@itemprop="recipeIngredient"]', $microdata);
+            }
             foreach ($nodes as $node) {
                 if ($nodes->item(0)->hasAttribute('content')) {
                     $line = $node->getAttribute('content');
