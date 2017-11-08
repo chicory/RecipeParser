@@ -119,7 +119,7 @@ class RecipeParser {
         $classname = 'RecipeParser_Parser_' . $parser;
         $recipe = $classname::parse($doc, $url);
         $recipe->url = $url;
-        
+
         return $recipe;
 	}
 

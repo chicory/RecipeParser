@@ -5,28 +5,11 @@ class RecipeParser_Parser_MicrodataJsonLd {
     static public function parse(DOMDocument $doc, $url) {
         $recipe = new RecipeParser_Recipe();
         $xpath = new DOMXPath($doc);
-        
-        $jsonScripts = $xpath->query('//script[@type="application/ld+json"]');
-        // we iterate over all ld+json script elements to find the correct one containing a Recipe object.
-        if ($jsonScripts->length > 1) {
-            foreach ($jsonScripts as $script) {
-                $json = trim( $script->nodeValue );
-                if (!preg_match('/["|\']@type["|\']:["|\']Recipe["|\']/', $json) and !preg_match('/["|\']type["|\']:["|\']Recipe["|\']/', $json)) {
-                    continue;
-                }
-            }
-        } else {
-            $json = trim( $jsonScripts->item(0)->nodeValue );
-        }
-        $json = RecipeParser_Text::cleanJson($json);
-        $data = json_decode( $json );
-        
-        // Bail JSON-LD not marked up properly
-        if (!$data || !property_exists($data, "@context") || stripos($data->{'@context'}, "schema.org") === false ) {
-            return $recipe;
-        }
-        // Bail if no recipe in the markup
-        if (!property_exists($data, "@type") || $data->{'@type'} != 'Recipe') {
+
+        $data = self::findRecipeJSON($xpath);
+
+        // Bail if no Recipe JSON-LD in the markup
+        if (!$data) {
             return $recipe;
         }
         
@@ -35,33 +18,33 @@ class RecipeParser_Parser_MicrodataJsonLd {
         // Title
         if (property_exists($data, "name")) {
             $name = $data->name;
-            $recipe->title = RecipeParser_Text::formatTitle($name);
+            $recipe->title = $name ? RecipeParser_Text::formatTitle($name) : null;
         }
     
         // Summary
         if (property_exists($data, "description")) {
-            $summary = $data->description;
-            $recipe->description = RecipeParser_Text::formatAsParagraphs($summary);;
+            $description = $data->description;
+            $recipe->description = $description ? RecipeParser_Text::formatAsParagraphs($description) : null;
         }
     
         // Times
         if (property_exists($data, "prepTime")) {
             $prepTime = $data->prepTime;
-            $recipe->time['prep'] = RecipeParser_Text::formatISO_8601($prepTime);;
+            $recipe->time['prep'] = $prepTime ? RecipeParser_Text::formatISO_8601($prepTime) : null;
         }
         if (property_exists($data, "cookTime")) {
             $cookTime = $data->cookTime;
-            $recipe->time['cook'] = RecipeParser_Text::formatISO_8601($cookTime);;
+            $recipe->time['cook'] = $cookTime ? RecipeParser_Text::formatISO_8601($cookTime) : null;
         }
         if (property_exists($data, "totalTime")) {
             $totalTime = $data->totalTime;
-            $recipe->time['total'] = RecipeParser_Text::formatISO_8601($totalTime);;
+            $recipe->time['total'] = $totalTime ? RecipeParser_Text::formatISO_8601($totalTime) : null;
         }
     
         // Yield
         if (property_exists($data, "recipeYield")) {
             $recipeYield = $data->recipeYield;
-            $recipe->yield = RecipeParser_Text::formatAsParagraphs($recipeYield);;
+            $recipe->yield = $recipeYield ? RecipeParser_Text::formatAsParagraphs($recipeYield) : null;
         }
     
         // Ingredients
@@ -88,29 +71,63 @@ class RecipeParser_Parser_MicrodataJsonLd {
     
         // Photo
         if (property_exists($data, "image")) {
-            $photo_url = $data->image;
+            $image = $data->image;
 
-            if (is_array($photo_url)) {
-                $first_element = array_values($photo_url)[0];
-                $photo_url = $first_element;
+            // Grab first image if array was provided
+            if (is_array($image)) {
+                $image = array_values($image)[0];
             }
-            if (is_object($photo_url)) {
-                $photo_url = $photo_url->url;
+
+            // Extract url if image object was provided
+            if (is_object($image)) {
+                $image = $image->url;
 
             }
-            $recipe->photo_url = RecipeParser_Text::relativeToAbsolute($photo_url, $url);
+            $recipe->photo_url = RecipeParser_Text::relativeToAbsolute($image, $url);
         }
     
         // Credits
         if (property_exists($data, "author")) {
-            if (property_exists($data->author, "name")) {
-                $recipe->credits = RecipeParser_Text::formatCredits($data->author->name);
-            } else {
-                $recipe->credits = RecipeParser_Text::formatCredits($data->author);
+            $author = $data->author;
+
+            // Grab first author if array was provided
+            if (is_array($author)) {
+                $author = array_values($author)[0];
             }
+
+            // Extract name if author object was provided
+            if (is_object($author)) {
+                $author = $author->name;
+
+            }
+
+            $recipe->credits = RecipeParser_Text::formatCredits($author);
         }
         
         return $recipe;
+    }
+
+    static public function findRecipeJSON($xpath) {
+        $scripts = $xpath->query('//script[@type="application/ld+json"]');
+
+        foreach ($scripts as $script) {
+            $jsons = trim($script->nodeValue);
+            $jsons = RecipeParser_Text::cleanJson($jsons);
+            $jsons = json_decode($jsons);
+
+            if (is_array($jsons)) {
+                foreach ($jsons as $json) {
+                    if (
+                        property_exists($json, "@context")
+                        && stripos($json->{'@context'}, "schema.org") !== false
+                        && property_exists($json, "@type")
+                        && stripos($json->{'@type'}, "Recipe") !== false
+                    ) {
+                        return $json;
+                    }
+                }
+            }
+        }
     }
 
 }
