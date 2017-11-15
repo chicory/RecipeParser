@@ -127,6 +127,16 @@ class RecipeParser_Parser_MicrodataJsonLd {
                     }
                 }
             }
+            else {
+                if (
+                    property_exists($jsons, "@context")
+                    && stripos($jsons->{'@context'}, "schema.org") !== false
+                    && property_exists($jsons, "@type")
+                    && stripos($jsons->{'@type'}, "Recipe") !== false
+                ) {
+                    return $jsons;
+                }
+            }
         }
     }
 
