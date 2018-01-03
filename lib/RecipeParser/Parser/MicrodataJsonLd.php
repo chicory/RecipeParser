@@ -5,9 +5,7 @@ class RecipeParser_Parser_MicrodataJsonLd {
     static public function parse(DOMDocument $doc, $url) {
         $recipe = new RecipeParser_Recipe();
         $xpath = new DOMXPath($doc);
-
         $data = self::findRecipeJSON($xpath);
-
         // Bail if no Recipe JSON-LD in the markup
         if (!$data) {
             return $recipe;
@@ -30,6 +28,7 @@ class RecipeParser_Parser_MicrodataJsonLd {
         // Times
         if (property_exists($data, "prepTime")) {
             $prepTime = $data->prepTime;
+            #$prepTime = preg_replace("/[^0-9,.]/", "", $prepTime);
             $recipe->time['prep'] = $prepTime ? RecipeParser_Text::formatISO_8601($prepTime) : null;
         }
         if (property_exists($data, "cookTime")) {
@@ -109,10 +108,14 @@ class RecipeParser_Parser_MicrodataJsonLd {
 
     static public function findRecipeJSON($xpath) {
         $scripts = $xpath->query('//script[@type="application/ld+json"]');
-
         foreach ($scripts as $script) {
             $jsons = trim($script->nodeValue);
             $jsons = RecipeParser_Text::cleanJson($jsons);
+
+            # strip php's trailing commas
+            # $jsons = preg_replace("/,(?!.*,)/", "", $jsons);
+            # $jsons = preg_replace("/,\s*]/", "]", $jsons);
+
             $jsons = json_decode($jsons);
 
             if (is_array($jsons)) {

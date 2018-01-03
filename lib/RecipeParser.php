@@ -109,7 +109,6 @@ class RecipeParser {
         if (!$parser) {
             $parser = self::matchMarkupFormat($html);
         }
-
         // If we haven't found a matching parser, bail out.
         if (!$parser) {
             throw new NoMatchingParserException("No matching parser found for URL: $url");
