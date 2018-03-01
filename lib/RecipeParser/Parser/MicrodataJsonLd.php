@@ -27,19 +27,18 @@ class RecipeParser_Parser_MicrodataJsonLd {
     
         // Times
         if (property_exists($data, "prepTime")) {
-            $prepTime = $data->prepTime;
-            #$prepTime = preg_replace("/[^0-9,.]/", "", $prepTime);
+            $prepTime = self::cleanDuration($data->prepTime);
             $recipe->time['prep'] = $prepTime ? RecipeParser_Text::formatISO_8601($prepTime) : null;
         }
         if (property_exists($data, "cookTime")) {
-            $cookTime = $data->cookTime;
+            $cookTime = self::cleanDuration($data->cookTime);
             $recipe->time['cook'] = $cookTime ? RecipeParser_Text::formatISO_8601($cookTime) : null;
         }
         if (property_exists($data, "totalTime")) {
-            $totalTime = $data->totalTime;
+            $totalTime = self::cleanDuration($data->totalTime);
+
             $recipe->time['total'] = $totalTime ? RecipeParser_Text::formatISO_8601($totalTime) : null;
         }
-    
         // Yield
         if (property_exists($data, "recipeYield")) {
             $recipeYield = $data->recipeYield;
@@ -105,7 +104,15 @@ class RecipeParser_Parser_MicrodataJsonLd {
         
         return $recipe;
     }
-
+    static public function cleanDuration($str) {
+        $str = preg_replace("/P0Y0M0DT/", "", $str);
+        $str = preg_replace("/0H/", "", $str);
+        $str = preg_replace("/0.000S/", "", $str);
+        if ($str && strpos($str, 'PT') === false) {
+            $str = "PT" . $str;
+        }
+        return $str;
+    }
     static public function findRecipeJSON($xpath) {
         $scripts = $xpath->query('//script[@type="application/ld+json"]');
         foreach ($scripts as $script) {
