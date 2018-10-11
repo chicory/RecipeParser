@@ -9,12 +9,19 @@ class FileUtil {
         $filename = sys_get_temp_dir() . "/" . $basename;
         return $filename;
     }
-    
+
+    /**
+     * Performs a cURL request to download and return the page HTML
+     * @param $url the source URL to download from
+     * @return mixed source html from response
+     */
     public static function downloadPage($url) {
         $user_agent = "Onetsp-RecipeParser/0.1 (+https://github.com/onetsp/RecipeParser)";
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
+        // added CURLOPT_ENCODING "gzip,deflate" in order to address sites with compression
+        curl_setopt($ch, CURLOPT_ENCODING, "gzip,deflate");
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
