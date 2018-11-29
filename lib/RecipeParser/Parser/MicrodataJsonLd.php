@@ -32,7 +32,13 @@ class RecipeParser_Parser_MicrodataJsonLd {
         }
         if (property_exists($data, "cookTime")) {
             $cookTime = self::cleanDuration($data->cookTime);
-            $recipe->time['cook'] = $cookTime ? RecipeParser_Text::formatISO_8601($cookTime) : null;
+            $parsed_time = null;
+            try {
+                $parsed_time = RecipeParser_Text::formatISO_8601($cookTime);
+            } catch (\Exception $e) {
+                $parsed_time = null;
+            }
+            $recipe->time['cook'] = $parsed_time;
         }
         if (property_exists($data, "totalTime")) {
             $totalTime = self::cleanDuration($data->totalTime);
