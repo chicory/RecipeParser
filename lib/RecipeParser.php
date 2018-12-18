@@ -113,7 +113,6 @@ class RecipeParser {
         if (!$parser) {
             throw new NoMatchingParserException("No matching parser found for URL: $url");
         }
-
         // Initialize the right parser and run it.
         $classname = 'RecipeParser_Parser_' . $parser;
         $recipe = $classname::parse($doc, $url);
