@@ -12,6 +12,8 @@ class RecipeParser {
     const MICROFORMAT_V2_SPEC      = "MicroformatV2";
     const JSON_LD                  = "MicrodataJsonLd";
 
+    const DEFAULT_SERVING         = 4;
+
     /**
      * Load registered parsers from ini file.
      */
@@ -116,8 +118,11 @@ class RecipeParser {
         // Initialize the right parser and run it.
         $classname = 'RecipeParser_Parser_' . $parser;
         $recipe = $classname::parse($doc, $url);
-        $recipe->url = $url;
 
+        # enforce default servings
+        $recipe->yield = ($recipe->yield ? $recipe->yield : self::DEFAULT_SERVING);
+        
+        $recipe->url = $url;
         return $recipe;
 	}
 
