@@ -12,7 +12,7 @@ class RecipeParser {
     const MICROFORMAT_V2_SPEC      = "MicroformatV2";
     const JSON_LD                  = "MicrodataJsonLd";
 
-    const DEFAULT_SERVING         = 4;
+    const DEFAULT_SERVING         = "4";
 
     /**
      * Load registered parsers from ini file.
