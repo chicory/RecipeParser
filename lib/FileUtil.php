@@ -16,7 +16,7 @@ class FileUtil {
      * @return mixed source html from response
      */
     public static function downloadPage($url) {
-        $user_agent = "Onetsp-RecipeParser/0.1 (+https://github.com/onetsp/RecipeParser)";
+        $user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36";
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -28,7 +28,6 @@ class FileUtil {
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
         curl_setopt($ch, CURLOPT_MAXREDIRS, 4);
         curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
-
         $html = curl_exec($ch);
         curl_close($ch);
 
