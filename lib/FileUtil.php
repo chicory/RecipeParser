@@ -28,6 +28,12 @@ class FileUtil {
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
         curl_setopt($ch, CURLOPT_MAXREDIRS, 4);
         curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+
+        // Quaker requires IP Whitelisting; routing request through Chicory proxy
+        if (strpos( $url, 'quakeroats.com' ) !== false) {
+            curl_setopt($ch, CURLOPT_PROXY, 'socks5://prod-proxy.chicoryapp.com:1080');
+        }
+
         $html = curl_exec($ch);
         curl_close($ch);
 
