@@ -33,7 +33,9 @@ class FileUtil {
         if (strpos( $url, 'quakeroats.com' ) !== false) {
             curl_setopt($ch, CURLOPT_PROXY, 'socks5://prod-proxy.chicoryapp.com:1080');
         }
-
+        if (strpos( $url, 'landolakes.com' ) !== false) {
+            curl_setopt($ch, CURLOPT_PROXY, 'socks5://prod-proxy.chicoryapp.com:1080');
+        }
         $html = curl_exec($ch);
         curl_close($ch);
 
