@@ -29,16 +29,17 @@ class FileUtil {
         curl_setopt($ch, CURLOPT_MAXREDIRS, 4);
         curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
 
+        $proxy = 'socks5h://chicory:ck3sHks3a2@proxy.chicoryapp.com:1080';
+
         // Quaker requires IP Whitelisting; routing request through Chicory proxy
         if (strpos( $url, 'quakeroats.com' ) !== false) {
-            curl_setopt($ch, CURLOPT_PROXY, 'socks5://prod-proxy.chicoryapp.com:1080');
+            curl_setopt($ch, CURLOPT_PROXY, $proxy);
         }
         if (strpos( $url, 'landolakes.com' ) !== false) {
-            curl_setopt($ch, CURLOPT_PROXY, 'socks5://prod-proxy.chicoryapp.com:1080');
+            curl_setopt($ch, CURLOPT_PROXY, $proxy);
         }
         $html = curl_exec($ch);
         curl_close($ch);
-
         return $html;
     }
 
