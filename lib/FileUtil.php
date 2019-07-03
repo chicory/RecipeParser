@@ -31,13 +31,17 @@ class FileUtil {
 
         $proxy = 'socks5h://chicory:ck3sHks3a2@proxy.chicoryapp.com:1080';
 
-        // Quaker requires IP Whitelisting; routing request through Chicory proxy
+        // Publishers that require IP whitelisting; routing request through Chicory Proxy
         if (strpos( $url, 'quakeroats.com' ) !== false) {
             curl_setopt($ch, CURLOPT_PROXY, $proxy);
         }
         if (strpos( $url, 'landolakes.com' ) !== false) {
             curl_setopt($ch, CURLOPT_PROXY, $proxy);
         }
+        if (strpos( $url, 'thekitchn.com' ) !== false) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy);
+        }
+
         $html = curl_exec($ch);
         curl_close($ch);
         return $html;
