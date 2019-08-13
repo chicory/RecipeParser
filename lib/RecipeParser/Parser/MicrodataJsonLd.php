@@ -130,6 +130,7 @@ class RecipeParser_Parser_MicrodataJsonLd {
             # $jsons = preg_replace("/,\s*]/", "]", $jsons);
 
             $jsons = json_decode($jsons);
+            // check for array format
             if (is_array($jsons)) {
                 foreach ($jsons as $json) {
                     if (
@@ -142,6 +143,7 @@ class RecipeParser_Parser_MicrodataJsonLd {
                     }
                 }
             } else {
+                // check for graph format
                 if (property_exists($jsons, "@graph")) {
                     foreach ($jsons->{'@graph'} as $json) {
                         if (
@@ -153,15 +155,15 @@ class RecipeParser_Parser_MicrodataJsonLd {
                             return $json;
                         }
                     }
-                } else {
-                    if (
-                        property_exists($jsons, "@context")
-                        && stripos($jsons->{'@context'}, "schema.org") !== false
-                        && property_exists($jsons, "@type")
-                        && stripos($jsons->{'@type'}, "Recipe") !== false
-                    ) {
-                        return $jsons;
-                    }
+                }
+                // check for single entry format
+                if (
+                    property_exists($jsons, "@context")
+                    && stripos($jsons->{'@context'}, "schema.org") !== false
+                    && property_exists($jsons, "@type")
+                    && stripos($jsons->{'@type'}, "Recipe") !== false
+                ) {
+                    return $jsons;
                 }
             }
         }
