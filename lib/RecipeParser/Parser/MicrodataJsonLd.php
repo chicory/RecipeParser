@@ -2,9 +2,6 @@
 
 class RecipeParser_Parser_MicrodataJsonLd {
 
-    function clean_text()
-
-
     static public function parse(DOMDocument $doc, $url) {
         $recipe = new RecipeParser_Recipe();
         $xpath = new DOMXPath($doc);
