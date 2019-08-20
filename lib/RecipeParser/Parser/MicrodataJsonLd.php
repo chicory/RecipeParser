@@ -2,6 +2,9 @@
 
 class RecipeParser_Parser_MicrodataJsonLd {
 
+    function clean_text()
+
+
     static public function parse(DOMDocument $doc, $url) {
         $recipe = new RecipeParser_Recipe();
         $xpath = new DOMXPath($doc);
@@ -58,6 +61,10 @@ class RecipeParser_Parser_MicrodataJsonLd {
         }
         foreach ($ingredients as $ingredient) {
             $ingredient = RecipeParser_Text::formatAsOneLine($ingredient);
+
+            // decode html entities and strip html tags
+            $title = strip_tags(html_entity_decode($ingredient));
+
             if (empty($ingredient)) {
                 continue;
             }
