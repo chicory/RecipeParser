@@ -60,7 +60,7 @@ class RecipeParser_Parser_MicrodataJsonLd {
             $ingredient = RecipeParser_Text::formatAsOneLine($ingredient);
 
             // decode html entities and strip html tags
-            $title = strip_tags(html_entity_decode($ingredient));
+            $ingredient = strip_tags(html_entity_decode($ingredient));
 
             if (empty($ingredient)) {
                 continue;
