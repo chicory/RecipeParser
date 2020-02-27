@@ -154,9 +154,19 @@ class RecipeParser_Parser_MicrodataJsonLd {
                             property_exists($json, "@context")
                             && stripos($json->{'@context'}, "schema.org") !== false
                             && property_exists($json, "@type")
-                            && stripos($json->{'@type'}, "Recipe") !== false
                         ) {
-                            return $json;
+                            // support type arrays per https://json-ld.org/spec/latest/json-ld/#specifying-the-type
+                            if (is_array($json->{'@type'})) {
+                                foreach($json->{'@type'} as $type) {
+                                    if(stripos($type, "Recipe") !== false) {
+                                        return $json;
+                                    }
+                                }
+                            } else {
+                                if (stripos($json->{'@type'}, "Recipe") !== false) {
+                                    return $json;
+                                }
+                            }
                         }
                     }
                 }
