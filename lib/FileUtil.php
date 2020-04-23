@@ -40,14 +40,15 @@ class FileUtil {
         );
         foreach ($whitelisted_domains as $domain) {
             if (strpos( $url, $domain ) !== false) {
-                echo "WHITELISTED DOMAIN";
                 curl_setopt($ch, CURLOPT_PROXY, $proxy);
             }
         }
 
+        // add age check cookie
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Cookie: is-legal-age=1"));
+
         $html = curl_exec($ch);
         curl_close($ch);
-        echo $html;
         return $html;
     }
 
