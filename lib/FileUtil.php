@@ -35,16 +35,19 @@ class FileUtil {
             'quakeroats.com',
             'landolakes.com',
             'thekitchn.com',
-            'barcart.com'
+            'barcart.com',
+            'barcartstage.wpengine.com'
         );
         foreach ($whitelisted_domains as $domain) {
             if (strpos( $url, $domain ) !== false) {
+                echo "WHITELISTED DOMAIN";
                 curl_setopt($ch, CURLOPT_PROXY, $proxy);
             }
         }
 
         $html = curl_exec($ch);
         curl_close($ch);
+        echo $html;
         return $html;
     }
 
