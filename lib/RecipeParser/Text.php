@@ -97,7 +97,7 @@ ONETSP_TIME: $time
     static public function cleanupClippedRecipeHtmlWithScripts($html) {
         $html = self::normalize($html);
         $html = RecipeParser_Text::stripConditionalComments($html);
-        $html = RecipeParser_Text::cleanupSVGs($html);
+        // $html = RecipeParser_Text::cleanupSVGs($html);
         return $html;
     }
     
