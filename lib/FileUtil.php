@@ -29,6 +29,11 @@ class FileUtil {
         curl_setopt($ch, CURLOPT_MAXREDIRS, 4);
         curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
 
+        // Disable SSL Verification
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+
+
         $proxy = 'socks5h://chicory:ck3sHks3a2@proxy.chicoryapp.com:1080';
 
         // Publishers that require IP whitelisting; routing request through Chicory Proxy
