@@ -33,19 +33,25 @@ class FileUtil {
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
-
         $proxy = 'socks5h://chicory:ck3sHks3a2@proxy.chicoryapp.com:1080';
 
         // Publishers that require IP whitelisting; routing request through Chicory Proxy
-        if (strpos( $url, 'quakeroats.com' ) !== false) {
-            curl_setopt($ch, CURLOPT_PROXY, $proxy);
+        $proxy = 'socks5h://chicory:ck3sHks3a2@proxy.chicoryapp.com:1080';
+        $whitelisted_domains = array(
+            'quakeroats.com',
+            'landolakes.com',
+            'thekitchn.com',
+            'barcart.com',
+            'barcartstage.wpengine.com'
+        );
+        foreach ($whitelisted_domains as $domain) {
+            if (strpos( $url, $domain ) !== false) {
+                curl_setopt($ch, CURLOPT_PROXY, $proxy);
+            }
         }
-        if (strpos( $url, 'landolakes.com' ) !== false) {
-            curl_setopt($ch, CURLOPT_PROXY, $proxy);
-        }
-        if (strpos( $url, 'thekitchn.com' ) !== false) {
-            curl_setopt($ch, CURLOPT_PROXY, $proxy);
-        }
+
+        // add age check cookie
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Cookie: is-legal-age=1"));
 
         $html = curl_exec($ch);
         curl_close($ch);

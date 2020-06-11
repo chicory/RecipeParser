@@ -151,12 +151,30 @@ class RecipeParser_Parser_MicrodataJsonLd {
                 if (property_exists($jsons, "@graph")) {
                     foreach ($jsons->{'@graph'} as $json) {
                         if (
-                            property_exists($json, "@context")
-                            && stripos($json->{'@context'}, "schema.org") !== false
-                            && property_exists($json, "@type")
-                            && stripos($json->{'@type'}, "Recipe") !== false
+                                (
+                                    (
+                                        // case outter object
+                                        property_exists($jsons, "@context")
+                                        && stripos($jsons->{'@context'}, "schema.org") !== false
+                                    ) || (
+                                        // case inner object
+                                        property_exists($json, "@context")
+                                        && stripos($json->{'@context'}, "schema.org") !== false
+                                     )
+                                ) && property_exists($json, "@type")
                         ) {
-                            return $json;
+                            // support type arrays per https://json-ld.org/spec/latest/json-ld/#specifying-the-type
+                            if (is_array($json->{'@type'})) {
+                                foreach($json->{'@type'} as $type) {
+                                    if(stripos($type, "Recipe") !== false) {
+                                        return $json;
+                                    }
+                                }
+                            } else {
+                                if (stripos($json->{'@type'}, "Recipe") !== false) {
+                                    return $json;
+                                }
+                            }
                         }
                     }
                 }
