@@ -48,6 +48,9 @@ class RecipeParser_Parser_MicrodataJsonLd {
         // Yield
         if (property_exists($data, "recipeYield")) {
             $recipeYield = $data->recipeYield;
+            if (is_array($recipeYield) and !empty($recipeYield)) {
+                $recipeYield = $recipeYield[0];
+            }
             $recipe->yield = $recipeYield ? RecipeParser_Text::formatAsParagraphs($recipeYield) : null;
         }
     
