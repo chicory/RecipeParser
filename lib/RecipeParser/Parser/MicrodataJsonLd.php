@@ -25,26 +25,37 @@ class RecipeParser_Parser_MicrodataJsonLd {
             $recipe->description = $description ? RecipeParser_Text::formatAsParagraphs($description) : null;
         }
     
-        // Times
-        if (property_exists($data, "prepTime")) {
-            $prepTime = self::cleanDuration($data->prepTime);
-            $recipe->time['prep'] = $prepTime ? RecipeParser_Text::formatISO_8601($prepTime) : null;
-        }
-        if (property_exists($data, "cookTime")) {
-            $cookTime = self::cleanDuration($data->cookTime);
-            $parsed_time = null;
-            try {
-                $parsed_time = RecipeParser_Text::formatISO_8601($cookTime);
-            } catch (\Exception $e) {
-                $parsed_time = null;
+        // Prep Time
+        try {
+            if (property_exists($data, "prepTime")) {
+                $prepTime = self::cleanDuration($data->prepTime);
+                $recipe->time['prep'] = $prepTime ? RecipeParser_Text::formatISO_8601($prepTime) : null;
             }
-            $recipe->time['cook'] = $parsed_time;
+        } catch (\Exception $e) {
+            $recipe->time['prep'] = null;
         }
-        if (property_exists($data, "totalTime")) {
-            $totalTime = self::cleanDuration($data->totalTime);
 
-            $recipe->time['total'] = $totalTime ? RecipeParser_Text::formatISO_8601($totalTime) : null;
+        // Cook Time
+        try {
+            if (property_exists($data, "cookTime")) {
+                $cookTime = self::cleanDuration($data->cookTime);
+                $recipe->time['cook'] = $cookTime ? RecipeParser_Text::formatISO_8601($cookTime) : null;
+            }
+        } catch (\Exception $e) {
+            $recipe->time['cook'] = null;
         }
+
+        // Total Time
+        try {
+            if (property_exists($data, "totalTime")) {
+                $totalTime = self::cleanDuration($data->totalTime);
+                $recipe->time['total'] = $totalTime ? RecipeParser_Text::formatISO_8601($totalTime) : null;
+            }
+        } catch (\Exception $e) {
+            $recipe->time['total'] = null;
+        }
+
+
         // Yield
         if (property_exists($data, "recipeYield")) {
             $recipeYield = $data->recipeYield;
