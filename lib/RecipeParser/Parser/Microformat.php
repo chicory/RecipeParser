@@ -68,48 +68,62 @@ class RecipeParser_Parser_Microformat {
             }
 
             // Prep Times
-            $nodes = $xpath->query('.//*[@class="prepTime"]//*[@class="value-title"]', $hrecipe);
-            if ($nodes->length) {
-                $value = $nodes->item(0)->getAttribute('title');
-                $recipe->time['prep'] = RecipeParser_Text::iso8601ToMinutes($value);
-            } else {
-                $nodes = $xpath->query('.//*[@class="preptime"]', $hrecipe);
+            try {
+                $nodes = $xpath->query('.//*[@class="prepTime"]//*[@class="value-title"]', $hrecipe);
                 if ($nodes->length) {
-                    $value = $nodes->item(0)->nodeValue;
-                    $recipe->time['prep'] = RecipeParser_Times::toMinutes($value);
+                    $value = $nodes->item(0)->getAttribute('title');
+                    $recipe->time['prep'] = RecipeParser_Text::iso8601ToMinutes($value);
+                } else {
+                    $nodes = $xpath->query('.//*[@class="preptime"]', $hrecipe);
+                    if ($nodes->length) {
+                        $value = $nodes->item(0)->nodeValue;
+                        $recipe->time['prep'] = RecipeParser_Times::toMinutes($value);
+                    }
                 }
+            } catch (\Exception $e) {
+                $recipe->time['prep'] = null;
             }
+
 
             // Cook Times
-            $nodes = $xpath->query('.//*[@class="cookTime"]//*[@class="value-title"]', $hrecipe);
-            if ($nodes->length) {
-                $value = $nodes->item(0)->getAttribute('title');
-                $recipe->time['cook'] = RecipeParser_Text::iso8601ToMinutes($value);
-            } else {
-                $nodes = $xpath->query('.//*[@class="cooktime"]', $hrecipe);
+            try {
+                $nodes = $xpath->query('.//*[@class="cookTime"]//*[@class="value-title"]', $hrecipe);
                 if ($nodes->length) {
-                    $value = $nodes->item(0)->nodeValue;
-                    $recipe->time['cook'] = RecipeParser_Times::toMinutes($value);
+                    $value = $nodes->item(0)->getAttribute('title');
+                    $recipe->time['cook'] = RecipeParser_Text::iso8601ToMinutes($value);
+                } else {
+                    $nodes = $xpath->query('.//*[@class="cooktime"]', $hrecipe);
+                    if ($nodes->length) {
+                        $value = $nodes->item(0)->nodeValue;
+                        $recipe->time['cook'] = RecipeParser_Times::toMinutes($value);
+                    }
                 }
+            } catch (\Exception $e) {
+                $recipe->time['cook'] = null;
             }
 
+
             // Total Time / Duration
-            $nodes = $xpath->query('.//*[@class="totalTime"]//*[@class="value-title"]', $hrecipe);
-            if ($nodes->length) {
-                $value = $nodes->item(0)->getAttribute('title');
-                $recipe->time['total'] = RecipeParser_Text::iso8601ToMinutes($value);
-            } else {
-                $nodes = $xpath->query('.//*[@class="duration"]//*[@class="value-title"]', $hrecipe);
+            try {
+                $nodes = $xpath->query('.//*[@class="totalTime"]//*[@class="value-title"]', $hrecipe);
                 if ($nodes->length) {
                     $value = $nodes->item(0)->getAttribute('title');
                     $recipe->time['total'] = RecipeParser_Text::iso8601ToMinutes($value);
                 } else {
-                    $nodes = $xpath->query('.//*[@class="duration"]', $hrecipe);
+                    $nodes = $xpath->query('.//*[@class="duration"]//*[@class="value-title"]', $hrecipe);
                     if ($nodes->length) {
-                        $value = $nodes->item(0)->nodeValue;
-                        $recipe->time['total'] = RecipeParser_Times::toMinutes($value);
+                        $value = $nodes->item(0)->getAttribute('title');
+                        $recipe->time['total'] = RecipeParser_Text::iso8601ToMinutes($value);
+                    } else {
+                        $nodes = $xpath->query('.//*[@class="duration"]', $hrecipe);
+                        if ($nodes->length) {
+                            $value = $nodes->item(0)->nodeValue;
+                            $recipe->time['total'] = RecipeParser_Times::toMinutes($value);
+                        }
                     }
                 }
+            } catch (\Exception $e) {
+                $recipe->time['total'] = null;
             }
 
             // Ingredients

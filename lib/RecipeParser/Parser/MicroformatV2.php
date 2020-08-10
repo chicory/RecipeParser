@@ -62,11 +62,15 @@ class RecipeParser_Parser_MicroformatV2 {
             }
 
             // Total time
-            $nodes = $xpath->query('.//*[contains(concat(" ", normalize-space(@class), " "), " dt-duration ")]', $hrecipe);
-            if ($nodes->length) {
-                $time_value = RecipeParser_Text::iso8601ToMinutes($nodes->item(0)->getAttribute('datetime'));
-                $time_line = RecipeParser_Times::toMinutes($nodes->item(0)->nodeValue);
-                $recipe->time['total'] = $time_value ?: $time_line;
+            try {
+                $nodes = $xpath->query('.//*[contains(concat(" ", normalize-space(@class), " "), " dt-duration ")]', $hrecipe);
+                if ($nodes->length) {
+                    $time_value = RecipeParser_Text::iso8601ToMinutes($nodes->item(0)->getAttribute('datetime'));
+                    $time_line = RecipeParser_Times::toMinutes($nodes->item(0)->nodeValue);
+                    $recipe->time['total'] = $time_value ?: $time_line;
+                }
+            } catch (\Exception $e) {
+                $recipe->time['total'] = null;
             }
 
             // Ingredients
