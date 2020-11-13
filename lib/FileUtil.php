@@ -42,6 +42,7 @@ class FileUtil {
             'landolakes.com',
             'thekitchn.com',
             'barcart.com',
+            'parade.com',
             'barcartstage.wpengine.com'
         );
         foreach ($whitelisted_domains as $domain) {
