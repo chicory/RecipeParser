@@ -43,7 +43,8 @@ class FileUtil {
             'thekitchn.com',
             'barcart.com',
             'parade.com',
-            'barcartstage.wpengine.com'
+            'barcartstage.wpengine.com',
+            'stage.boarshead.com'
         );
         foreach ($whitelisted_domains as $domain) {
             if (strpos( $url, $domain ) !== false) {
