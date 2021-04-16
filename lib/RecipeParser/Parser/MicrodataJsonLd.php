@@ -118,12 +118,10 @@ class RecipeParser_Parser_MicrodataJsonLd {
             }
 
             // Extract name if author object was provided
-            if (is_object($author)) {
+            if (is_object($author) && property_exists($author, "name")) {
                 $author = $author->name;
-
+                $recipe->credits = RecipeParser_Text::formatCredits($author);
             }
-
-            $recipe->credits = RecipeParser_Text::formatCredits($author);
         }
         
         return $recipe;
